@@ -115,4 +115,4 @@ print("WER: {:2f}".format(100 * wer.compute(predictions=result["pred_strings"], 
 
 The Common Voice `train`, `validation` datasets were used for training.
 
-The script used for training can be found [here](https://huggingface.co/othrif/wav2vec2-large-xlsr-arabic/tree/main) 
+The script used for training can be found [here](https://huggingface.co/kmfoda/wav2vec2-large-xlsr-arabic/tree/main) 

@@ -47,8 +47,15 @@ test_dataset = load_dataset("common_voice", "ar", split="test[:2%]")
 processor = Wav2Vec2Processor.from_pretrained("kmfoda/wav2vec2-large-xlsr-arabic")
 model = Wav2Vec2ForCTC.from_pretrained("kmfoda/wav2vec2-large-xlsr-arabic")
 
+resamplers = {  # all three sampling rates exist in test split
+    48000: torchaudio.transforms.Resample(48000, 16000),
+    44100: torchaudio.transforms.Resample(44100, 16000),
+    32000: torchaudio.transforms.Resample(32000, 16000),
+}
+
 def prepare_example(example):
-    example["speech"], _ = librosa.load(example["path"], sr=16000)
+    speech, sampling_rate = torchaudio.load(example["path"])
+    example["speech"] = resamplers[sampling_rate](speech).squeeze().numpy()
     return example
 
 test_dataset = test_dataset.map(prepare_example)
@@ -84,8 +91,15 @@ model.to("cuda")
 
 chars_to_ignore_regex = '[\,\?\.\!\-\;\:\"\“\؟\_\؛\ـ\—]'
 
+resamplers = {  # all three sampling rates exist in test split
+    48000: torchaudio.transforms.Resample(48000, 16000),
+    44100: torchaudio.transforms.Resample(44100, 16000),
+    32000: torchaudio.transforms.Resample(32000, 16000),
+}
+
 def prepare_example(example):
-    example["speech"], _ = librosa.load(example["path"], sr=16000)
+    speech, sampling_rate = torchaudio.load(example["path"])
+    example["speech"] = resamplers[sampling_rate](speech).squeeze().numpy()
     return example
 
 test_dataset = test_dataset.map(prepare_example)
@@ -108,7 +122,7 @@ print("WER: {:2f}".format(100 * wer.compute(predictions=result["pred_strings"], 
 
 ```
 
-**Test Result**: ??
+**Test Result**: 52.53
 
 
 ## Training
